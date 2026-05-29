@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
     }
 
     ram = calloc(RAM_SIZE, 1);
-    FILE *file = fopen("../data/RAM.dat", "rb"); // read as binary
+    FILE *file = fopen("data/RAM.dat", "rb"); // read as binary
 
     if (file) {
         fread(ram, 1, RAM_SIZE, file);
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
     initializeCache(&L2, L2s, L2E, L2b, "L2");
 
     char traceLocation[60];
-    sprintf(traceLocation, "../data/traces/%s", trace_file);
+    sprintf(traceLocation, "data/traces/%s", trace_file);
     FILE *trace = fopen(traceLocation, "r");
     if (!trace) {
         printf("%s does not exist.\n", trace_file);
