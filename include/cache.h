@@ -1,11 +1,13 @@
 #ifndef CACHE_H
 #define CACHE_H
 
+#include <stdint.h>
+
 typedef struct  {
     int valid;
-    int tag;
+    uint32_t tag;
     int time;
-    int *data;
+    uint8_t *data;
 } CacheLine;
 
 typedef struct {
@@ -25,7 +27,7 @@ typedef struct {
 
 void initializeCache(Cache *cache, int s, int E, int b, const char *name);
 void freeCache(Cache *cache);
-int read_cache(Cache *cache, unsigned addr, unsigned *outBlock);
-void place_cache(Cache *cache, unsigned addr, unsigned *block_in, int *time);
-int store_cache(Cache *cache, unsigned addr, int size, unsigned *data);
+int read_cache(Cache *cache, uint32_t addr, uint8_t *outBlock);
+void place_cache(Cache *cache, uint32_t addr, uint8_t *block_in, int *time);
+int store_cache(Cache *cache, uint32_t addr, int size, uint8_t *data);
 #endif

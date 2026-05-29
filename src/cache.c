@@ -44,9 +44,9 @@ void freeCache(Cache *cache) {
     free(cache->sets);
 }
 
-int read_cache(Cache *cache, unsigned addr, unsigned *outBlock) {
-    unsigned tag = addr >> (cache->b + cache->s);
-    unsigned index = (addr >> cache->b) & ((1 << cache->s) - 1);
+int read_cache(Cache *cache, uint32_t addr, uint8_t *outBlock) {
+    uint32_t tag = addr >> (cache->b + cache->s);
+    uint32_t index = (addr >> cache->b) & ((1 << cache->s) - 1);
     int i;
     for(i = 0; i < cache->E; i++) {
         if(cache->sets[index].lines[i].valid && cache->sets[index].lines[i].tag == tag) {
@@ -62,9 +62,9 @@ int read_cache(Cache *cache, unsigned addr, unsigned *outBlock) {
 }
 
 // After MISS
-void place_cache(Cache *cache, unsigned addr, unsigned *block_in, int *time) {
-    unsigned tag = addr >> (cache->b + cache->s);
-    unsigned index = (addr >> cache->b) & ((1 << cache->s) - 1);
+void place_cache(Cache *cache, uint32_t addr, uint8_t *block_in, int *time) {
+    uint32_t tag = addr >> (cache->b + cache->s);
+    uint32_t index = (addr >> cache->b) & ((1 << cache->s) - 1);
 
     int target = -1;
     int associativity = cache->E;
@@ -97,10 +97,10 @@ void place_cache(Cache *cache, unsigned addr, unsigned *block_in, int *time) {
 }   
 
 // For modify
-int store_cache(Cache *cache, unsigned addr, int size, unsigned *data) {
-    unsigned tag = addr >> (cache->b + cache->s);
-    unsigned index = (addr >> cache->b) & ((1 << cache->s) - 1);
-    unsigned offset = addr & ((1 << cache->b) - 1);
+int store_cache(Cache *cache, uint32_t addr, int size, uint8_t *data) {
+    uint32_t tag = addr >> (cache->b + cache->s);
+    uint32_t index = (addr >> cache->b) & ((1 << cache->s) - 1);
+    uint32_t offset = addr & ((1 << cache->b) - 1);
 
     int associativity = cache->E;
     int i;

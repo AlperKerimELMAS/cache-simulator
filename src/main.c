@@ -6,19 +6,19 @@
 
 #define RAM_SIZE (16 * 1024 * 1024)
 
-int *ram;
+uint8_t *ram;
 int globalTime = 0;
 Cache L1I, L1D, L2;
-unsigned outBlockL2[256];
+uint8_t outBlockL2[256];
 
 // hex to bytes, 2 hex char  = 1 byte logic
-void hexToBytes(const char *hexStr, int *byteArray, int size) {
+void hexToBytes(const char *hexStr, uint8_t *byteArray, int size) {
     int i;
     for(i = 0; i < size; i++)
         sscanf(hexStr + 2 * i, "%2hhx", &byteArray[i]);
 }
 
-void process_load(char operation, int addr) {
+void process_load(char operation, uint32_t addr) {
     Cache *l1 = (operation == 'I') ? &L1I : &L1D;
 
     int l1Hit = read_cache(l1, addr, NULL);
@@ -27,27 +27,27 @@ void process_load(char operation, int addr) {
     printf(" %s %s, L2 %s \n", l1->name, l1Hit ? "hit" : "miss", l2Hit ? "hit" : "miss");
 
     if(!l1Hit && !l2Hit) { // not in the cache
-        unsigned offset = addr & ((1 << l1->b) - 1);
-        unsigned blockStart = addr - offset;
-        unsigned block[256];
+        uint32_t offset = addr & ((1 << l1->b) - 1);
+        uint32_t blockStart = addr - offset;
+        uint8_t block[256];
         memcpy(block, &ram[blockStart], l1->B);
 
         place_cache(&L2, blockStart, block, &globalTime);
         place_cache(l1, blockStart, block, &globalTime);
     
-        unsigned l2Index = (addr >> L2.b) & ((1 << L2.s) - 1);
+        uint32_t l2Index = (addr >> L2.b) & ((1 << L2.s) - 1);
         printf(" Place in L2 set %d, %s\n", l2Index, l1->name);
     }
     else if(!l1Hit && l2Hit) { // Not in l1 cache but already in l2 cache
-        unsigned offset = addr & ((1 << l1->b) - 1);
-        unsigned blockStart = addr - offset;
+        uint32_t offset = addr & ((1 << l1->b) - 1);
+        uint32_t blockStart = addr - offset;
 
         place_cache(l1, blockStart, outBlockL2, &globalTime);
         printf(" Place in %s\n", l1->name);
     }
 }
 
-void process_store(unsigned addr, int size, unsigned *data) {
+void process_store(uint32_t addr, int size, uint8_t *data) {
     int l1Hit = store_cache(&L1D, addr, size, data);
     int l2Hit = store_cache(&L2, addr, size, data);
 
@@ -61,7 +61,6 @@ void process_store(unsigned addr, int size, unsigned *data) {
     print("RAM\n");
     
 }
-
 
 int main(int argc, char *argv[]) {
     
