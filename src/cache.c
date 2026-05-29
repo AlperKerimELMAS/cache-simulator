@@ -44,13 +44,16 @@ void freeCache(Cache *cache) {
     free(cache->sets);
 }
 
-int read_cache(Cache *cache, unsigned addr) {
+int read_cache(Cache *cache, unsigned addr, unsigned *outBlock) {
     unsigned tag = addr >> (cache->b + cache->s);
     unsigned index = (addr >> cache->b) & ((1 << cache->s) - 1);
     int i;
     for(i = 0; i < cache->E; i++) {
         if(cache->sets[index].lines[i].valid && cache->sets[index].lines[i].tag == tag) {
             cache->hits++;
+
+            if(outBlock != NULL)
+                memcpy(outBlock, cache->sets[index].lines[i].data, cache->B);
             return 1;
         }
     }

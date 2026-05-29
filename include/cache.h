@@ -25,7 +25,7 @@ typedef struct {
 
 void initializeCache(Cache *cache, int s, int E, int b, const char *name);
 void freeCache(Cache *cache);
-int read_cache(Cache *cache, unsigned addr);
+int read_cache(Cache *cache, unsigned addr, unsigned *outBlock);
 void place_cache(Cache *cache, unsigned addr, unsigned *block_in, int *time);
 int store_cache(Cache *cache, unsigned addr, int size, unsigned *data);
 #endif
