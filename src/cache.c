@@ -1,14 +1,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../include/cache.h"
-#include <math.h>
 
 void initializeCache(Cache *cache, int s, int E, int b, const char *name) {
     cache->s = s;
     cache->E = E;
     cache->b = b;
-    cache->S = pow(2, s);
-    cache->B = pow(2, b);
+    cache->S = 1 << s;
+    cache->B = 1 << b;
     cache->hits = 0;
     cache->misses = 0;
     cache->evictions = 0;

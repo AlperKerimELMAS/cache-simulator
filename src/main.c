@@ -53,12 +53,12 @@ void process_store(uint32_t addr, int size, uint8_t *data) {
 
     printf(" L1D %s, L2 %s\n", l1Hit ? "hit" : "miss", l2Hit ? "hit" : "miss");
     memcpy(&ram[addr], data, size);
-    print(" Store in ");
+    printf(" Store in ");
     if(l1Hit)
         printf("L1D ");
     if(l2Hit)
-        print("L2 ");
-    print("RAM\n");
+        printf("L2 ");
+    printf("RAM\n");
     
 }
 
@@ -124,12 +124,12 @@ int main(int argc, char *argv[]) {
         }
         else if(line[0] == 'S') {
             sscanf(line, "%c %x, %d, %s", &operation, &address, &size, dataString);
-            hex_to_bytes(dataString, dataBytes, size);
+            hexToBytes(dataString, dataBytes, size);
             process_store(address, size, dataBytes);
         }
         else if (line[0] == 'M') {
             sscanf(line, "%c %x, %d, %s", &operation, &address, &size, dataString);
-            hex_to_bytes(dataString, dataBytes, size);
+            hexToBytes(dataString, dataBytes, size);
             process_load('L', address);
             process_store(address, size, dataBytes);
         }
@@ -140,9 +140,9 @@ int main(int argc, char *argv[]) {
     printf("L1D-hits:%d L1D-misses:%d L1D-evictions:%d\n", L1D.hits, L1D.misses, L1D.evictions);
     printf("L2-hits:%d L2-misses:%d L2-evictions:%d\n", L2.hits, L2.misses, L2.evictions);
 
-    free_cache(&L1I);
-    free_cache(&L1D);
-    free_cache(&L2);
+    freeCache(&L1I);
+    freeCache(&L1D);
+    freeCache(&L2);
     free(ram);
 
     return 0;

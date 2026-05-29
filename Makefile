@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O2 -Iinclude
 
-TARGET = your_simulator
+TARGET = cache_simulator
 SRC_DIR = src
 OBJ_DIR = obj
 
