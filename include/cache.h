@@ -14,18 +14,18 @@ typedef struct {
 
 typedef struct {
     CacheSet *sets;
-    int numberOfSets;
-    int associativity;
-    int blockSize;
+    int S, s;
+    int B, b;
+    int E;
     int hits;
     int misses;
     int evictions;
-    int memoryReads;
-    int memoryWrites;
+    char name[8];
 } Cache;
 
-Cache *initializeCache(int numberOfSets, int blockSize, int assocciativity);
+void initializeCache(Cache *cache, int s, int E, int b, const char *name);
 void freeCache(Cache *cache);
-void accessCache(Cache *cache, char instructionType, int address, int size, int *time);
-
+int read_cache(Cache *cache, unsigned addr);
+void place_cache(Cache *cache, unsigned addr, unsigned *block_in, int *time);
+int store_cache(Cache *cache, unsigned addr, int size, unsigned *data);
 #endif
