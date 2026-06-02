@@ -3,18 +3,21 @@
 
 #include <stdint.h>
 
-typedef struct  {
+typedef struct
+{
     int valid;
     uint32_t tag;
     int time;
     uint8_t *data;
 } CacheLine;
 
-typedef struct {
+typedef struct
+{
     CacheLine *lines;
 } CacheSet;
 
-typedef struct {
+typedef struct
+{
     CacheSet *sets;
     int S, s;
     int B, b;

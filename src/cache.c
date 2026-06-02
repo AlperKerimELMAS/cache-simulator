@@ -2,7 +2,8 @@
 #include <string.h>
 #include "../include/cache.h"
 
-void initializeCache(Cache *cache, int s, int E, int b, const char *name) {
+void initializeCache(Cache *cache, int s, int E, int b, const char *name)
+{
     cache->s = s;
     cache->E = E;
     cache->b = b;
@@ -18,9 +19,11 @@ void initializeCache(Cache *cache, int s, int E, int b, const char *name) {
     int numberOfSets = cache->S;
     int blockSize = cache->B;
     int i, j;
-    for(i = 0; i < numberOfSets; i++) {
+    for (i = 0; i < numberOfSets; i++)
+    {
         cache->sets[i].lines = malloc(E * sizeof(CacheLine));
-        for(j = 0; j < E; j++)  {
+        for (j = 0; j < E; j++)
+        {
             CacheLine *temp = &cache->sets[i].lines[j];
             temp->valid = 0;
             temp->data = malloc(blockSize);
@@ -29,13 +32,16 @@ void initializeCache(Cache *cache, int s, int E, int b, const char *name) {
     }
 }
 
-void freeCache(Cache *cache) {
+void freeCache(Cache *cache)
+{
     int i, j;
     int numberOfSets = cache->S;
     int numberOfLines = cache->E;
 
-    for(i = 0; i < numberOfSets; i++) {
-        for(j = 0; j < numberOfLines; j++) {
+    for (i = 0; i < numberOfSets; i++)
+    {
+        for (j = 0; j < numberOfLines; j++)
+        {
             free(cache->sets[i].lines[j].data);
         }
         free(cache->sets[i].lines);
@@ -43,15 +49,18 @@ void freeCache(Cache *cache) {
     free(cache->sets);
 }
 
-int read_cache(Cache *cache, uint32_t addr, uint8_t *outBlock) {
+int read_cache(Cache *cache, uint32_t addr, uint8_t *outBlock)
+{
     uint32_t tag = addr >> (cache->b + cache->s);
     uint32_t index = (addr >> cache->b) & ((1 << cache->s) - 1);
     int i;
-    for(i = 0; i < cache->E; i++) {
-        if(cache->sets[index].lines[i].valid && cache->sets[index].lines[i].tag == tag) {
+    for (i = 0; i < cache->E; i++)
+    {
+        if (cache->sets[index].lines[i].valid && cache->sets[index].lines[i].tag == tag)
+        {
             cache->hits++;
 
-            if(outBlock != NULL)
+            if (outBlock != NULL)
                 memcpy(outBlock, cache->sets[index].lines[i].data, cache->B);
             return 1;
         }
@@ -60,27 +69,32 @@ int read_cache(Cache *cache, uint32_t addr, uint8_t *outBlock) {
     return 0;
 }
 
-// After MISS
-void place_cache(Cache *cache, uint32_t addr, uint8_t *block_in, int *time) {
+void place_cache(Cache *cache, uint32_t addr, uint8_t *block_in, int *time)
+{
     uint32_t tag = addr >> (cache->b + cache->s);
     uint32_t index = (addr >> cache->b) & ((1 << cache->s) - 1);
 
     int target = -1;
     int associativity = cache->E;
     int i;
-    for(i = 0; i < associativity; i++) {
-        if(!cache->sets[index].lines[i].valid) {
+    for (i = 0; i < associativity; i++)
+    {
+        if (!cache->sets[index].lines[i].valid)
+        {
             target = i;
             break;
         }
     }
     // Eviction (FIFO)
-    if(target == -1) {
+    if (target == -1)
+    {
         cache->evictions++;
         target = 0;
         int minTime = cache->sets[index].lines[0].time;
-        for(i = 0; i < associativity; i++) {
-            if(cache->sets[index].lines[i].time < minTime) {
+        for (i = 0; i < associativity; i++)
+        {
+            if (cache->sets[index].lines[i].time < minTime)
+            {
                 target = i;
                 minTime = cache->sets[index].lines[i].time;
             }
@@ -92,11 +106,10 @@ void place_cache(Cache *cache, uint32_t addr, uint8_t *block_in, int *time) {
     (*time)++;
     cache->sets[index].lines[target].time = *time;
     memcpy(cache->sets[index].lines[target].data, block_in, cache->B);
+}
 
-}   
-
-// For modify
-int store_cache(Cache *cache, uint32_t addr, int size, uint8_t *data) {
+int store_cache(Cache *cache, uint32_t addr, int size, uint8_t *data)
+{
     uint32_t tag = addr >> (cache->b + cache->s);
     uint32_t index = (addr >> cache->b) & ((1 << cache->s) - 1);
     uint32_t offset = addr & ((1 << cache->b) - 1);
@@ -104,8 +117,10 @@ int store_cache(Cache *cache, uint32_t addr, int size, uint8_t *data) {
     int associativity = cache->E;
     int i;
 
-    for(i = 0; i < associativity; i++) {
-        if(cache->sets[index].lines[i].valid && cache->sets[index].lines[i].tag == tag) {
+    for (i = 0; i < associativity; i++)
+    {
+        if (cache->sets[index].lines[i].valid && cache->sets[index].lines[i].tag == tag)
+        {
             cache->hits++;
             memcpy(cache->sets[index].lines[i].data + offset, data, size);
             return 1;
